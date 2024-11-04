@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'formDatos_page.dart';
 import 'anemiaTest_page.dart';
+import 'ranking_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -147,14 +148,24 @@ class LoginPage extends StatelessWidget {
                               verificarDNI(context); // Verificar el DNI
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              padding: EdgeInsets.symmetric(vertical: 15),
+                              backgroundColor: const Color.fromARGB(255, 3, 29, 51),
+                              padding: EdgeInsets.symmetric(vertical: 20),
                             ),
                             child: Text(
                               'Verificar DNI',
-                              style: TextStyle(fontSize: 18),
+                              style: TextStyle(fontSize: 18, color: Colors.white),
                             ),
                           ),
+                          ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => RankingPage()),
+                            );
+                          },
+                          child: Text('Ver Ranking de Anemia por Región'),
+                        ),
+
                         ],
                       ),
                     ),

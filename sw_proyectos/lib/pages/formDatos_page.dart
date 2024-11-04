@@ -17,21 +17,36 @@ class _FormPageState extends State<FormPage> {
   final _formKey = GlobalKey<FormState>();
 
   // Controladores para los campos del formulario
-  final nombreController = TextEditingController(); // Controlador para el nombre
+  final nombreController = TextEditingController();
   final edadController = TextEditingController();
   final pesoController = TextEditingController();
   final tallaController = TextEditingController();
   final hemoglobinaController = TextEditingController();
   String? _sexo; // Para almacenar el sexo del infante
   String? _prediccion; // Para almacenar la predicción
+  String? _region; // Para almacenar la región seleccionada
+
+  // Lista de regiones disponibles
+  final List<String> _regiones = [
+    'Amazonas', 'Áncash', 'Apurímac', 'Arequipa', 'Ayacucho', 'Cajamarca',
+    'Cusco', 'Huancavelica', 'Huánuco', 'Ica', 'Junín', 'La Libertad',
+    'Lambayeque', 'Lima', 'Loreto', 'Madre de Dios', 'Moquegua', 'Pasco',
+    'Piura', 'Puno', 'San Martín', 'Tacna', 'Tumbes', 'Ucayali'
+  ];
 
   Future<void> enviarDatos() async {
-    if (_formKey.currentState!.validate()) { // Asegúrate de que el formulario sea válido
+    if (_formKey.currentState!.validate()) {
       if (_sexo == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Por favor selecciona el sexo')),
         );
-        return; // Salir de la función si el sexo es null
+        return;
+      }
+      if (_region == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Por favor selecciona la región')),
+        );
+        return;
       }
 
       // Crear una instancia del modelo Infante
@@ -45,14 +60,15 @@ class _FormPageState extends State<FormPage> {
       );
 
       try {
-        // Imprimir los datos que se enviarán
+        // Crear el cuerpo de la solicitud incluyendo la región
         var requestBody = {
           'DNI_Usuario': widget.dni,
+          'region': _region, // Añadir la región al cuerpo de la solicitud
           ...infante.toJson(),
         };
         print('Datos a enviar: ${jsonEncode(requestBody)}');
 
-        // Enviar datos del infante
+        // Enviar datos del infante a la API
         final response = await http.post(
           Uri.parse('http://192.168.0.15/Datos_proyecto/agregar_datos.php'),
           headers: {'Content-Type': 'application/json'},
@@ -62,7 +78,6 @@ class _FormPageState extends State<FormPage> {
         if (response.statusCode == 200) {
           var data = json.decode(response.body);
           if (data['success']) {
-            // Obtener la predicción
             int prediccion = await obtenerPrediccion(infante);
             await guardarDiagnostico(prediccion, infante);
 
@@ -103,7 +118,7 @@ class _FormPageState extends State<FormPage> {
     }
   }
 
-  Future<int> obtenerPrediccion(Infante infante) async {
+    Future<int> obtenerPrediccion(Infante infante) async {
     final response = await http.post(
       Uri.parse('http://127.0.0.1:5000/predict'),
       headers: {'Content-Type': 'application/json'},
@@ -179,14 +194,8 @@ class _FormPageState extends State<FormPage> {
                   border: OutlineInputBorder(),
                 ),
                 items: [
-                  DropdownMenuItem(
-                    value: 'M',
-                    child: Text('Masculino'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'F',
-                    child: Text('Femenino'),
-                  ),
+                  DropdownMenuItem(value: 'M', child: Text('Masculino')),
+                  DropdownMenuItem(value: 'F', child: Text('Femenino')),
                 ],
                 onChanged: (value) {
                   setState(() {
@@ -196,6 +205,29 @@ class _FormPageState extends State<FormPage> {
                 validator: (value) {
                   if (value == null) {
                     return 'Por favor selecciona el sexo';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                value: _region,
+                decoration: InputDecoration(
+                  labelText: 'Región*',
+                  border: OutlineInputBorder(),
+                ),
+                items: _regiones.map((region) => DropdownMenuItem(
+                  value: region,
+                  child: Text(region),
+                )).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _region = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return 'Por favor selecciona la región';
                   }
                   return null;
                 },
