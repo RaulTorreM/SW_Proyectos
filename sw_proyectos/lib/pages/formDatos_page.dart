@@ -1,321 +1,307 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'diagnostico_page.dart';
-import '../models/infante.dart'; // Importar el modelo
+import 'package:flutter/services.dart';
+import '../models/infante_model.dart';
+import '../repositories/infante_repository.dart';
+import '../pages/resultados_page.dart';
 
-class FormPage extends StatefulWidget {
-  final String dni; // Recibir el DNI del apoderado
+class InfanteFormPage extends StatefulWidget {
 
-  const FormPage({Key? key, required this.dni}) : super(key: key); // Constructor que recibe el DNI
+  final String dniUsuario;
+
+  const InfanteFormPage({super.key, required this.dniUsuario});
 
   @override
-  _FormPageState createState() => _FormPageState();
+  _InfanteFormPageState createState() => _InfanteFormPageState();
+
+  
 }
 
-class _FormPageState extends State<FormPage> {
+class DecimalTextInputFormatter extends TextInputFormatter {
+    @override
+    TextEditingValue formatEditUpdate(
+        TextEditingValue oldValue, TextEditingValue newValue) {
+      final text = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+      if (text.isEmpty) return TextEditingValue(text: '0.00');
+
+      final num = double.parse(text) / 100;
+      return TextEditingValue(
+        text: num.toStringAsFixed(2),
+        selection: TextSelection.collapsed(offset: num.toStringAsFixed(2).length),
+      );
+    }
+  }
+
+
+class _InfanteFormPageState extends State<InfanteFormPage> {
   final _formKey = GlobalKey<FormState>();
+  late TextEditingController _dniController;
+  final TextEditingController _nombresController = TextEditingController();
+  final TextEditingController _regionController = TextEditingController();
+  final TextEditingController _edadController = TextEditingController();
+  final TextEditingController _pesoController = TextEditingController();
+  final TextEditingController _tallaController = TextEditingController();
+  final TextEditingController _hemoglobinaController = TextEditingController();
 
-  // Controladores para los campos del formulario
-  final nombreController = TextEditingController();
-  final edadController = TextEditingController();
-  final pesoController = TextEditingController();
-  final tallaController = TextEditingController();
-  final hemoglobinaController = TextEditingController();
-  String? _sexo; // Para almacenar el sexo del infante
-  String? _prediccion; // Para almacenar la predicción
-  String? _region; // Para almacenar la región seleccionada
+  String? _sexoSeleccionado;
 
-  // Lista de regiones disponibles
+   @override
+    void initState() {
+      super.initState();
+      _dniController = TextEditingController(text: widget.dniUsuario);
+    }
+  
+
+  // Lista de opciones para sexo
+  final List<String> _sexoOpciones = ['M', 'F'];
+
+  // Lista de regiones
   final List<String> _regiones = [
-    'Amazonas', 'Áncash', 'Apurímac', 'Arequipa', 'Ayacucho', 'Cajamarca',
-    'Cusco', 'Huancavelica', 'Huánuco', 'Ica', 'Junín', 'La Libertad',
-    'Lambayeque', 'Lima', 'Loreto', 'Madre de Dios', 'Moquegua', 'Pasco',
-    'Piura', 'Puno', 'San Martín', 'Tacna', 'Tumbes', 'Ucayali'
+    'Junín',
+    'Yauli',
+    'Tarma',
+    'Chanchamayo',
+    'Satipo',
+    'Jauja',
+    'Concepción',
+    'Huancayo',
+    'Chupaca'
   ];
 
-  Future<void> enviarDatos() async {
-    if (_formKey.currentState!.validate()) {
-      if (_sexo == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Por favor selecciona el sexo')),
-        );
-        return;
-      }
-      if (_region == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Por favor selecciona la región')),
-        );
-        return;
-      }
+  Future<void> _submitForm() async {
 
-      // Crear una instancia del modelo Infante
-      Infante infante = Infante(
-        nombres: nombreController.text,
-        sexo: _sexo!,
-        edad: int.parse(edadController.text),
-        peso: double.parse(pesoController.text),
-        talla: double.parse(tallaController.text),
-        hemoglobina: double.parse(hemoglobinaController.text),
+        if (_formKey.currentState!.validate()) {
+      final infante = InfanteModel(
+        dniUsuario: _dniController.text,
+        nombres: _nombresController.text,
+        sexo: _sexoSeleccionado!,
+        region: _regionController.text,
+        edad: int.parse(_edadController.text),
+        peso: double.parse(_pesoController.text),
+        talla: double.parse(_tallaController.text),
+        hemoglobina: double.parse(_hemoglobinaController.text),
       );
 
       try {
-        // Crear el cuerpo de la solicitud incluyendo la región
-        var requestBody = {
-          'DNI_Usuario': widget.dni,
-          'region': _region, // Añadir la región al cuerpo de la solicitud
-          ...infante.toJson(),
-        };
-        print('Datos a enviar: ${jsonEncode(requestBody)}');
+        // Predicción
+        final resultado = await InfanteRepository().predecirNivelAnemia(infante);
 
-        // Enviar datos del infante a la API
-        final response = await http.post(
-          Uri.parse('http://192.168.0.15/Datos_proyecto/agregar_datos.php'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(requestBody),
+        
+        // Asegúrate de que el resultado no sea null
+        final nivelAnemia = resultado['nivel_anemia'] ?? 0;
+        final descripcion = resultado['descripcion'] ?? 'Descripción no disponible';
+        final recomendacion = resultado['recomendacion'] ?? 'Recomendación no disponible';
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ResultadosPage(
+              nombre: infante.nombres,
+              sexo: infante.sexo,
+              edad: infante.edad,
+              peso: infante.peso,
+              region: infante.region,
+              talla: infante.talla,
+              hemoglobina: infante.hemoglobina,
+              nivelAnemia: nivelAnemia,
+              descripcion: descripcion,
+              recomendacion: recomendacion,
+            ),
+          ),
         );
-
-        if (response.statusCode == 200) {
-          var data = json.decode(response.body);
-          if (data['success']) {
-            int prediccion = await obtenerPrediccion(infante);
-            await guardarDiagnostico(prediccion, infante);
-
-            setState(() {
-              _prediccion = prediccion.toString();
-            });
-
-            // Navegar a DiagnosticoPage
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DiagnosticoPage(
-                  nombre: infante.nombres,
-                  sexo: infante.sexo,
-                  edad: infante.edad,
-                  peso: infante.peso,
-                  talla: infante.talla,
-                  hemoglobina: infante.hemoglobina,
-                  nivelAnemia: prediccion,
-                ),
-              ),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(data['message'])),
-            );
-          }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al enviar datos: ${response.body}')),
-          );
-        }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ocurrió un error: $e')),
+          SnackBar(content: Text("Error: $e")),
         );
       }
     }
-  }
-
-    Future<int> obtenerPrediccion(Infante infante) async {
-    final response = await http.post(
-      Uri.parse('http://127.0.0.1:5000/predict'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(infante.toJson()),
-    );
-
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      return data['prediccion'];
-    } else {
-      throw Exception('Error al predecir');
-    }
-  }
-
-  Future<void> guardarDiagnostico(int nivelAnemia, Infante infante) async {
-    final response = await http.post(
-      Uri.parse('http://192.168.0.15/Datos_proyecto/guardar_diagnostico.php'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'DNI_Usuario': widget.dni,
-        'nombres': infante.nombres,
-        'sexo': infante.sexo,
-        'talla': infante.talla,
-        'peso': infante.peso,
-        'hemoglobina': infante.hemoglobina,
-        'edad': infante.edad,
-        'nivel_anemia': nivelAnemia,
-        'fecha_diagnostico': DateTime.now().toIso8601String().split('T')[0],
-      }),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Error al guardar el diagnóstico');
-    }
-  }
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Predicción de Anemia Infantil'),
-        backgroundColor: Colors.blueGrey,
+        title: Text("Formulario de Infante"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Text(
-                'Ingresar Datos del hijo(a)',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: nombreController,
-                decoration: InputDecoration(
-                  labelText: 'Nombre del Infante*',
-                  border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Datos del Infante",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa el nombre';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 10),
-              DropdownButtonFormField<String>(
-                value: _sexo,
-                decoration: InputDecoration(
-                  labelText: 'Sexo*',
-                  border: OutlineInputBorder(),
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: _dniController,
+                  readOnly: true, // Bloquea el campo DNI
+                  decoration: InputDecoration(
+                    labelText: "DNI del Usuario",
+                    border: OutlineInputBorder(),
+                  ),
                 ),
-                items: [
-                  DropdownMenuItem(value: 'M', child: Text('Masculino')),
-                  DropdownMenuItem(value: 'F', child: Text('Femenino')),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    _sexo = value;
-                  });
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return 'Por favor selecciona el sexo';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 10),
-              DropdownButtonFormField<String>(
-                value: _region,
-                decoration: InputDecoration(
-                  labelText: 'Región*',
-                  border: OutlineInputBorder(),
+                SizedBox(height: 16),
+                // Nombres
+                TextFormField(
+                  controller: _nombresController,
+                  decoration: InputDecoration(
+                    labelText: "Nombres",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Los nombres son requeridos";
+                    }
+                    return null;
+                  },
                 ),
-                items: _regiones.map((region) => DropdownMenuItem(
-                  value: region,
-                  child: Text(region),
-                )).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _region = value;
-                  });
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return 'Por favor selecciona la región';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                controller: edadController,
-                decoration: InputDecoration(
-                  labelText: 'Edad (meses)*',
-                  border: OutlineInputBorder(),
+                SizedBox(height: 16),
+                // Sexo
+                DropdownButtonFormField<String>(
+                  value: _sexoSeleccionado,
+                  items: _sexoOpciones.map((sexo) {
+                    return DropdownMenuItem(
+                      value: sexo,
+                      child: Text(sexo),
+                    );
+                  }).toList(),
+                  decoration: InputDecoration(
+                    labelText: "Sexo",
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      _sexoSeleccionado = value;
+                    });
+                  },
+                  validator: (value) =>
+                      value == null ? "Seleccione un sexo" : null,
                 ),
+                SizedBox(height: 16),
+                // Región
+                DropdownButtonFormField<String>(
+                  value: _regionController.text.isEmpty
+                      ? null
+                      : _regionController.text,
+                  items: _regiones.map((region) {
+                    return DropdownMenuItem(
+                      value: region,
+                      child: Text(region),
+                    );
+                  }).toList(),
+                  decoration: InputDecoration(
+                    labelText: "Provincia",
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      _regionController.text = value!;
+                    });
+                  },
+                  validator: (value) =>
+                      value == null ? "Seleccione una región" : null,
+                ),
+                SizedBox(height: 16),
+                // Edad
+                TextFormField(
+                controller: _edadController,
                 keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa la edad';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                controller: pesoController,
                 decoration: InputDecoration(
-                  labelText: 'Peso (kg)*',
+                  labelText: "Edad (en meses) [0-59]",
                   border: OutlineInputBorder(),
                 ),
-                keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa el peso';
+                    return "La edad es requerida";
+                  }
+                  final intValue = int.tryParse(value);
+                  if (intValue == null || intValue < 0 || intValue > 59) {
+                    return "La edad debe estar entre 0 y 59 meses";
                   }
                   return null;
                 },
               ),
-              SizedBox(height: 10),
-              TextFormField(
-                controller: tallaController,
-                decoration: InputDecoration(
-                  labelText: 'Talla (cm)*',
-                  border: OutlineInputBorder(),
+
+                SizedBox(height: 16),
+                // Peso
+                TextFormField(
+                  controller: _pesoController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [DecimalTextInputFormatter()],
+                  decoration: InputDecoration(
+                    labelText: "Peso (kg) [1.5 - 50.0]",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "El peso es requerido";
+                    }
+                    final doubleValue = double.tryParse(value);
+                    if (doubleValue == null || doubleValue < 1.5 || doubleValue > 50.0) {
+                      return "El peso debe estar entre 1.5 y 50.0 kg";
+                    }
+                    return null;
+                  },
                 ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa la talla';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                controller: hemoglobinaController,
-                decoration: InputDecoration(
-                  labelText: 'Hemoglobina (g/dL)*',
-                  border: OutlineInputBorder(),
+
+                SizedBox(height: 16),
+                // Talla
+                TextFormField(
+                  controller: _tallaController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [DecimalTextInputFormatter()],
+                  decoration: InputDecoration(
+                    labelText: "Talla (cm) [40.0 - 150.0cm]",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "La talla es requerido";
+                    }
+                    final doubleValue = double.tryParse(value);
+                    if (doubleValue == null || doubleValue < 40.0 || doubleValue > 150.0) {
+                      return "El talla debe estar entre 40.0 y 150.0 cm";
+                    }
+                    return null;
+                  },
                 ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa la hemoglobina';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    enviarDatos(); // Enviar datos a la API
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: EdgeInsets.symmetric(vertical: 15),
+                SizedBox(height: 16),
+                // Hemoglobina
+                TextFormField(
+                  controller: _hemoglobinaController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [DecimalTextInputFormatter()],
+                  decoration: InputDecoration(
+                    labelText: "Hemoglobina (g/dL) [4.5 - 17.5 g/dL]",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "El nivel de Hemoglobina es requerido";
+                    }
+                    final doubleValue = double.tryParse(value);
+                    if (doubleValue == null || doubleValue < 4.5 || doubleValue > 17.5) {
+                      return "El nivel de Hemoglobina debe estar entre 4.5 y 17.5 g/dL";
+                    }
+                    return null;
+                  },
                 ),
-                child: Text(
-                  'Diagnosticar',
-                  style: TextStyle(fontSize: 18),
+                SizedBox(height: 16),
+                // Botón de envío
+                ElevatedButton(
+                  onPressed: _submitForm,
+                  child: Text("Enviar"),
                 ),
-              ),
-              if (_prediccion != null) ...[
-                SizedBox(height: 20),
-                Text('Predicción de Anemia: $_prediccion'),
               ],
-            ],
+            ),
           ),
         ),
       ),
     );
   }
+
+  
 }

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_4f97034f7740bf42459409f2234a613b {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_4f97034f7740bf42459409f2234a613b" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_4f97034f7740bf42459409f2234a613b = L.map(
+                "map_4f97034f7740bf42459409f2234a613b",
+                {
+                    center: [-12.0659, -75.2048],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 8,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_68b5f393b713e212a0a1d9a6c3ce272c = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_68b5f393b713e212a0a1d9a6c3ce272c.addTo(map_4f97034f7740bf42459409f2234a613b);
+        
+    
+            var circle_marker_8c852d638264c079146f6bfbc95f71cf = L.circleMarker(
+                [-11.0544, -75.3371],
+                {"bubblingMouseEvents": true, "color": "#f4fab0", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f4fab0", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 30.833333333333336, "stroke": true, "weight": 3}
+            ).addTo(map_4f97034f7740bf42459409f2234a613b);
+        
+    
+        var popup_14a30c7d102353c9b22a02cf805867ae = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_01e56ddeb9726bdef44804aa45fe8df2 = $(`<div id="html_01e56ddeb9726bdef44804aa45fe8df2" style="width: 100.0%; height: 100.0%;"><b>Región:</b> Chanchamayo<br><b>Nivel de riesgo promedio:</b> 2.58</div>`)[0];
+                popup_14a30c7d102353c9b22a02cf805867ae.setContent(html_01e56ddeb9726bdef44804aa45fe8df2);
+            
+        
+
+        circle_marker_8c852d638264c079146f6bfbc95f71cf.bindPopup(popup_14a30c7d102353c9b22a02cf805867ae)
+        ;
+
+        
+    
+    
+            var circle_marker_15cc6d18497459c1c2f633a2237c043a = L.circleMarker(
+                [-12.0566, -75.2796],
+                {"bubblingMouseEvents": true, "color": "#91d068", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#91d068", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 37.0, "stroke": true, "weight": 3}
+            ).addTo(map_4f97034f7740bf42459409f2234a613b);
+        
+    
+        var popup_ccdf2e004dad84a41c60ab0d536cac8b = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d4e6286f6462950f03846d50780f4867 = $(`<div id="html_d4e6286f6462950f03846d50780f4867" style="width: 100.0%; height: 100.0%;"><b>Región:</b> Chupaca<br><b>Nivel de riesgo promedio:</b> 3.20</div>`)[0];
+                popup_ccdf2e004dad84a41c60ab0d536cac8b.setContent(html_d4e6286f6462950f03846d50780f4867);
+            
+        
+
+        circle_marker_15cc6d18497459c1c2f633a2237c043a.bindPopup(popup_ccdf2e004dad84a41c60ab0d536cac8b)
+        ;
+
+        
+    
+    
+            var circle_marker_cabe2a8552f4d691049c11702c258cc8 = L.circleMarker(
+                [-11.9192, -75.3263],
+                {"bubblingMouseEvents": true, "color": "#feffbe", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#feffbe", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 30.0, "stroke": true, "weight": 3}
+            ).addTo(map_4f97034f7740bf42459409f2234a613b);
+        
+    
+        var popup_f0af4fd700bf85cab66307b36c19cb01 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_229148d2c63ca6421b38235d20116900 = $(`<div id="html_229148d2c63ca6421b38235d20116900" style="width: 100.0%; height: 100.0%;"><b>Región:</b> Concepción<br><b>Nivel de riesgo promedio:</b> 2.50</div>`)[0];
+                popup_f0af4fd700bf85cab66307b36c19cb01.setContent(html_229148d2c63ca6421b38235d20116900);
+            
+        
+
+        circle_marker_cabe2a8552f4d691049c11702c258cc8.bindPopup(popup_f0af4fd700bf85cab66307b36c19cb01)
+        ;
+
+        
+    
+    
+            var circle_marker_4f6246d3de7237495d60ca2d024aca21 = L.circleMarker(
+                [-12.0659, -75.2048],
+                {"bubblingMouseEvents": true, "color": "#138c4a", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#138c4a", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 42.69230769230769, "stroke": true, "weight": 3}
+            ).addTo(map_4f97034f7740bf42459409f2234a613b);
+        
+    
+        var popup_de97110fd69a65ffbd64a3b9d67d651f = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_791aa37471a89102d0592f98e49a02e7 = $(`<div id="html_791aa37471a89102d0592f98e49a02e7" style="width: 100.0%; height: 100.0%;"><b>Región:</b> Huancayo<br><b>Nivel de riesgo promedio:</b> 3.77</div>`)[0];
+                popup_de97110fd69a65ffbd64a3b9d67d651f.setContent(html_791aa37471a89102d0592f98e49a02e7);
+            
+        
+
+        circle_marker_4f6246d3de7237495d60ca2d024aca21.bindPopup(popup_de97110fd69a65ffbd64a3b9d67d651f)
+        ;
+
+        
+    
+    
+            var circle_marker_74c251c281c77f2bc50d961cab8ed0af = L.circleMarker(
+                [-11.7761, -75.4965],
+                {"bubblingMouseEvents": true, "color": "#fedc88", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#fedc88", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 26.818181818181817, "stroke": true, "weight": 3}
+            ).addTo(map_4f97034f7740bf42459409f2234a613b);
+        
+    
+        var popup_7c403c47f3046cf95733abbd94778d83 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_c6ac3a3aa8c631ea6265b50a379b0741 = $(`<div id="html_c6ac3a3aa8c631ea6265b50a379b0741" style="width: 100.0%; height: 100.0%;"><b>Región:</b> Jauja<br><b>Nivel de riesgo promedio:</b> 2.18</div>`)[0];
+                popup_7c403c47f3046cf95733abbd94778d83.setContent(html_c6ac3a3aa8c631ea6265b50a379b0741);
+            
+        
+
+        circle_marker_74c251c281c77f2bc50d961cab8ed0af.bindPopup(popup_7c403c47f3046cf95733abbd94778d83)
+        ;
+
+        
+    
+    
+            var circle_marker_7f058d41fc16c38661633740fb46d9b8 = L.circleMarker(
+                [-11.1582, -75.9931],
+                {"bubblingMouseEvents": true, "color": "#feeda1", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#feeda1", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 28.333333333333336, "stroke": true, "weight": 3}
+            ).addTo(map_4f97034f7740bf42459409f2234a613b);
+        
+    
+        var popup_29ef37105483310af19bd1d2ccb346d5 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_25b406698eb5d68bbc598c08c94cee7d = $(`<div id="html_25b406698eb5d68bbc598c08c94cee7d" style="width: 100.0%; height: 100.0%;"><b>Región:</b> Junín<br><b>Nivel de riesgo promedio:</b> 2.33</div>`)[0];
+                popup_29ef37105483310af19bd1d2ccb346d5.setContent(html_25b406698eb5d68bbc598c08c94cee7d);
+            
+        
+
+        circle_marker_7f058d41fc16c38661633740fb46d9b8.bindPopup(popup_29ef37105483310af19bd1d2ccb346d5)
+        ;
+
+        
+    
+    
+            var circle_marker_50fd4a29f8f456f0b2f5aba375f76a73 = L.circleMarker(
+                [-11.2523, -74.6382],
+                {"bubblingMouseEvents": true, "color": "#dff293", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#dff293", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 32.5, "stroke": true, "weight": 3}
+            ).addTo(map_4f97034f7740bf42459409f2234a613b);
+        
+    
+        var popup_5e2e15110b4b6ca7054bbd1d075b6207 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_8c60ab884aa55ee903e6c8b9e1a78cae = $(`<div id="html_8c60ab884aa55ee903e6c8b9e1a78cae" style="width: 100.0%; height: 100.0%;"><b>Región:</b> Satipo<br><b>Nivel de riesgo promedio:</b> 2.75</div>`)[0];
+                popup_5e2e15110b4b6ca7054bbd1d075b6207.setContent(html_8c60ab884aa55ee903e6c8b9e1a78cae);
+            
+        
+
+        circle_marker_50fd4a29f8f456f0b2f5aba375f76a73.bindPopup(popup_5e2e15110b4b6ca7054bbd1d075b6207)
+        ;
+
+        
+    
+    
+            var circle_marker_64d7b3b34fcf758573ad5e4c54d40688 = L.circleMarker(
+                [-11.4186, -75.6902],
+                {"bubblingMouseEvents": true, "color": "#9bd469", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#9bd469", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 36.53846153846153, "stroke": true, "weight": 3}
+            ).addTo(map_4f97034f7740bf42459409f2234a613b);
+        
+    
+        var popup_e954a0e87ab522b92fcf63dbe21b5ee4 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_9e7ba27e92958548eeef97f8fc9b5e33 = $(`<div id="html_9e7ba27e92958548eeef97f8fc9b5e33" style="width: 100.0%; height: 100.0%;"><b>Región:</b> Tarma<br><b>Nivel de riesgo promedio:</b> 3.15</div>`)[0];
+                popup_e954a0e87ab522b92fcf63dbe21b5ee4.setContent(html_9e7ba27e92958548eeef97f8fc9b5e33);
+            
+        
+
+        circle_marker_64d7b3b34fcf758573ad5e4c54d40688.bindPopup(popup_e954a0e87ab522b92fcf63dbe21b5ee4)
+        ;
+
+        
+    
+    
+            var circle_marker_cc7d8d9913e901b1fb5d4e0347fc3945 = L.circleMarker(
+                [-11.7895, -76.0244],
+                {"bubblingMouseEvents": true, "color": "#57b65f", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#57b65f", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 39.54545454545455, "stroke": true, "weight": 3}
+            ).addTo(map_4f97034f7740bf42459409f2234a613b);
+        
+    
+        var popup_70582f2dbdd8011f2fcaa47c2d5ce988 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_192e79f00a3b3bc34c05f755233fd400 = $(`<div id="html_192e79f00a3b3bc34c05f755233fd400" style="width: 100.0%; height: 100.0%;"><b>Región:</b> Yauli<br><b>Nivel de riesgo promedio:</b> 3.45</div>`)[0];
+                popup_70582f2dbdd8011f2fcaa47c2d5ce988.setContent(html_192e79f00a3b3bc34c05f755233fd400);
+            
+        
+
+        circle_marker_cc7d8d9913e901b1fb5d4e0347fc3945.bindPopup(popup_70582f2dbdd8011f2fcaa47c2d5ce988)
+        ;
+
+        
+    
+</script>
+</html>
